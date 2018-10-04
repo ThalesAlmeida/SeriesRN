@@ -1,26 +1,33 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
 
-export default class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.linha}>Open up App.js to start working on your app!</Text>
-      </View>
-    );
+import LoginPage from './src/pages/LoginPage';
+
+export default createStackNavigator({
+  'Login': {
+      screen: LoginPage,
+      navigationOptions:{
+        title: 'Serializable',
+        flex: 1,
+
+      }
   }
-}
+}, {
+    navigationOptions: {
+      title: "Séries",
+      //Setinha
+      headerTintColor: 'white',
+      headerStyle: {
+        //Cor de fundo
+        backgroundColor: '#778899',
+        //Largura da navigation
+        borderBottomWidth: 1,
+        //Cor da parte inferior
+        borderBottomColor: 'white'
+      },
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    
-  },
-  linha: {
-    color: 'black',
-  }
-
-});
+      headeTitleStyle:{
+        color:'white',
+        fontSize: 30,
+      }
+    }
+})
