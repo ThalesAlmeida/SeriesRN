@@ -45,7 +45,7 @@ export default class LoginPage extends React.Component {
             .catch(error => {
                 if (error.code === 'auth/user-not-found'){
                     Alert.alert('Usuário não encontrado',
-                    'Deseja criar um cadastro com as informações inseridas?')
+                    'Contate o administrador do app')
                 }
             })
             .catch(error => {
