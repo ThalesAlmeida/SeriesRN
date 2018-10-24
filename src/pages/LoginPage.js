@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, Button, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, ActivityIndicator, Alert } from 'react-native';
 import firebase from 'firebase'
 
 import FormRow from '../components/FormRow';
@@ -12,6 +12,7 @@ export default class LoginPage extends React.Component {
             mail: '',
             password: '',
             isLoading: false,
+            message: '',
         }
     }
 
@@ -25,8 +26,6 @@ export default class LoginPage extends React.Component {
             messagingSenderId: "453357548933"
         };
         firebase.initializeApp(config);
-
-
     }
 
     onChangeHandler(field, value) {
@@ -36,17 +35,48 @@ export default class LoginPage extends React.Component {
     }
 
     tryLogin() {
-        this.setState({ isLoading: true });
+        this.setState({ isLoading: true, message: '' });
         const { mail, password } = this.state
         console.log(this.state);
         firebase.auth().signInWithEmailAndPassword(mail, password)
             .then(user => {
-                console.log('Usuário autenticado', user);
+                this.setState({ message: 'Usuário autenticado' })
             })
             .catch(error => {
+                if (error.code === 'auth/user-not-found'){
+                    Alert.alert('Usuário não encontrado',
+                    'Deseja criar um cadastro com as informações inseridas?')
+                }
+            })
+            .catch(error => {
+                this.setState({ message: this.getMessageByErrorCode(error.code) })
                 console.log('usuário não encontrado', error);
             })
             .then(() => this.setState({ isLoading: false }))
+    }
+
+    getMessageByErrorCode(errorCode){
+        switch(errorCode){
+            case 'auth/wrong-password':
+               return 'Senha incorreta';
+            case 'auth/user-not-found':
+                return 'Usuário não encontrado';
+            default:
+            return 'Erro desconhecido';
+                break;
+        }
+    }
+
+    renderMessage() {
+        const { message } = this.state;
+        if (!message)
+            return null
+
+        return (
+            <View>
+                <Text>{message}</Text>
+            </View>
+        )
     }
 
     renderButton() {
@@ -57,6 +87,7 @@ export default class LoginPage extends React.Component {
                 onPress={() => this.tryLogin()} />
         )
     }
+
 
 
     render() {
@@ -76,6 +107,7 @@ export default class LoginPage extends React.Component {
                         onChangeText={value => this.onChangeHandler('password', value)} />
                 </FormRow>
                 {this.renderButton()}
+                {this.renderMessage()}
             </View >
         )
     }
