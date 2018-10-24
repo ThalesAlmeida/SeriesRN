@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, Button } from 'react-native';
+import { View, TextInput, StyleSheet, Button, ActivityIndicator } from 'react-native';
 import firebase from 'firebase'
 
 import FormRow from '../components/FormRow';
@@ -11,10 +11,11 @@ export default class LoginPage extends React.Component {
         this.state = {
             mail: '',
             password: '',
+            isLoading: false,
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         const config = {
             apiKey: "AIzaSyAz33SrWntUud03MR-xnn73n6KkG17shMA",
             authDomain: "fidelidade-75813.firebaseapp.com",
@@ -22,27 +23,42 @@ export default class LoginPage extends React.Component {
             projectId: "fidelidade-75813",
             storageBucket: "fidelidade-75813.appspot.com",
             messagingSenderId: "453357548933"
-          };
-          firebase.initializeApp(config);
+        };
+        firebase.initializeApp(config);
 
-          firebase.auth().signInWithEmailAndPassword('thalesalves44@gmail.com', '123456')
-          .then(user => {
-              console.log('Usuário autenticado', user);
-          })
-          .catch(error =>{
-              console.log('usuário não encontrado', error);
-          })
+
     }
 
     onChangeHandler(field, value) {
-            this.setState({
+        this.setState({
             [field]: value
         })
     }
 
-    tryLogin(){
+    tryLogin() {
+        this.setState({ isLoading: true });
+        const { mail, password } = this.state
         console.log(this.state);
+        firebase.auth().signInWithEmailAndPassword(mail, password)
+            .then(user => {
+                console.log('Usuário autenticado', user);
+            })
+            .catch(error => {
+                console.log('usuário não encontrado', error);
+            })
+            .then(() => this.setState({ isLoading: false }))
     }
+
+    renderButton() {
+        if (this.state.isLoading)
+            return <ActivityIndicator />;
+        return (
+            <Button title="Login"
+                onPress={() => this.tryLogin()} />
+        )
+    }
+
+
     render() {
         return (
             <View style={styles.container}>
@@ -59,8 +75,7 @@ export default class LoginPage extends React.Component {
                         value={this.state.password}
                         onChangeText={value => this.onChangeHandler('password', value)} />
                 </FormRow>
-                <Button title="Login"
-                onPress={() => this.tryLogin()} />
+                {this.renderButton()}
             </View >
         )
     }
