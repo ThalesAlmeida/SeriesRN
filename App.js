@@ -6,7 +6,7 @@ export default createStackNavigator({
   'Login': {
       screen: LoginPage,
       navigationOptions:{
-        title: 'Serializable',
+        title: 'Cartão fidelidade',
         flex: 1,
 
       }
