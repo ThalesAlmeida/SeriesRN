@@ -2,14 +2,17 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet, Button, ActivityIndicator, Alert } from 'react-native';
 import firebase from 'firebase'
 
+import { connect } from 'react-redux';
+import { tryLogin } from '../actions';
+
 import FormRow from '../components/FormRow';
 
-export default class LoginPage extends React.Component {
+class LoginPage extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            mail: '',
+            email: '',
             password: '',
             isLoading: false,
             message: '',
@@ -36,33 +39,19 @@ export default class LoginPage extends React.Component {
 
     tryLogin() {
         this.setState({ isLoading: true, message: '' });
-        const { mail, password } = this.state
-        console.log(this.state);
-        firebase.auth().signInWithEmailAndPassword(mail, password)
-            .then(user => {
-                this.setState({ message: 'Usuário autenticado' })
-            })
-            .catch(error => {
-                if (error.code === 'auth/user-not-found'){
-                    Alert.alert('Usuário não encontrado',
-                    'Contate o administrador do app')
-                }
-            })
-            .catch(error => {
-                this.setState({ message: this.getMessageByErrorCode(error.code) })
-                console.log('usuário não encontrado', error);
-            })
-            .then(() => this.setState({ isLoading: false }))
+        const { email, password } = this.state;
+
+        this.props.tryLogin({email, password})
     }
 
-    getMessageByErrorCode(errorCode){
-        switch(errorCode){
+    getMessageByErrorCode(errorCode) {
+        switch (errorCode) {
             case 'auth/wrong-password':
-               return 'Senha incorreta';
+                return 'Senha incorreta';
             case 'auth/user-not-found':
                 return 'Usuário não encontrado';
             default:
-            return 'Erro desconhecido';
+                return 'Erro desconhecido';
                 break;
         }
     }
@@ -96,8 +85,8 @@ export default class LoginPage extends React.Component {
                 <FormRow first>
                     <TextInput style={styles.input}
                         placeholder='user@mail.com'
-                        value={this.state.mail}
-                        onChangeText={value => this.onChangeHandler('mail', value)} />
+                        value={this.state.email}
+                        onChangeText={value => this.onChangeHandler('email', value)} />
                 </FormRow>
                 <FormRow last>
                     <TextInput style={styles.input}
@@ -122,5 +111,7 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 5,
         paddingBottom: 10,
-    }
-})
+    },
+});
+
+export default connect(null, { tryLogin })(LoginPage)
