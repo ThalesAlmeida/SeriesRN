@@ -41,7 +41,11 @@ class LoginPage extends React.Component {
         this.setState({ isLoading: true, message: '' });
         const { email, password } = this.state;
 
-        this.props.tryLogin({email, password})
+        this.props.tryLogin({ email, password })
+            .then(() => {
+                this.setState({message: "Sucesso"});
+                this.props.navigation.replace('Main');
+            })
     }
 
     getMessageByErrorCode(errorCode) {

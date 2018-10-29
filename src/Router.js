@@ -1,6 +1,7 @@
 import { createStackNavigator } from 'react-navigation';
 
 import LoginPage from './pages/LoginPage';
+import SeriesPage from './pages/SeriesPage';
 
 export default createStackNavigator({
   'Login': {
@@ -10,6 +11,9 @@ export default createStackNavigator({
         flex: 1,
 
       }
+  },
+  'Main': {
+    screen: SeriesPage
   }
 }, {
     navigationOptions: {
